@@ -17,7 +17,7 @@ const uploadImage = async (file) => {
       folder: 'posts'
     });
     
-    // await unlinkFile(file.path);
+    await unlinkFile(file.path);
     
     return {
       url: result.secure_url,
