@@ -91,8 +91,6 @@ const createPost = async (req, res) => {
     session.endSession();
     
     const createdPost = await Post.findById(post[0]._id).populate('tags', 'name');
-
-    
     
     return ApiResponse.success(res, createdPost, 201);
   } catch (error) {

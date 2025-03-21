@@ -1,6 +1,8 @@
+const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 const dotenv = require('dotenv');
-
+const util = require('util');
+const unlinkFile = util.promisify(fs.unlink);
 dotenv.config();
 
 cloudinary.config({
@@ -15,15 +17,22 @@ const uploadImage = async (file) => {
       folder: 'posts'
     });
     
+    await unlinkFile(file.path);
+    
     return {
       url: result.secure_url,
       id: result.public_id
     };
   } catch (error) {
+    try {
+      await unlinkFile(file.path);
+    } catch (unlinkError) {
+      console.error(`Failed to delete local file: ${unlinkError.message}`);
+    }
+    
     throw new Error(`Error uploading image: ${error.message}`);
   }
 };
-
 const deleteImage = async (publicId) => {
   try {
     await cloudinary.uploader.destroy(publicId);
